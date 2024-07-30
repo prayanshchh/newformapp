@@ -1,0 +1,69 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id String @id @default(uuid())
+  email String @unique
+  name String
+  password String?  
+  googleId     String? 
+  forms Form[]
+  question Question[]
+  response Response[]
+
+}
+model Form {
+  id String @id @default(uuid())
+  title       String
+  description String?
+  authorid String
+  author Users @relation(fields: [authorid], references: [id])
+  questions Question[]
+  response Response[]
+}
+
+model Question {
+  id String @id @default(uuid())
+  content String
+  userId    String
+  user      Users              @relation(fields: [userId], references: [id])
+  options Option[]
+  formid String
+  form Form @relation(fields: [formid], references: [id])
+  questionresponse QuestionResponse[]
+}
+
+model Option {
+  id String @id @default(uuid())
+  text String
+  questionid String
+  question Question @relation(fields: [questionid], references: [id])
+}
+
+model Response {
+  id String @id @default(uuid())
+  formid String
+  form Form @relation(fields: [formid], references: [id])
+  userid String
+  user Users @relation(fields: [userid], references: [id])
+  questionresponse QuestionResponse[]
+}
+
+model QuestionResponse {
+  id String @id @default(uuid())
+  questionid String
+  question Question @relation(fields: [questionid], references: [id])
+  responseid String
+  answer String
+  response Response @relation(fields: [responseid], references: [id])
+}
+
+
+
