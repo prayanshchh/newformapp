@@ -3,9 +3,10 @@ import React from "react"
 interface FormData{
     title: string,
     description?: string
+    id: string
 }
 
-const FormComp: React.FC<FormData> = ({title, description}) =>
+const FormComp: React.FC<FormData> = ({title, description, id}) =>
 {
     return <>
     <div className="max-w-3xl rounded overflow-hidden shadow-lg">

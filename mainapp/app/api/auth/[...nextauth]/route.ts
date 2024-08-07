@@ -43,7 +43,7 @@ const authOption : NextAuthOptions = ({
             {
           const isValid = await bcrypt.compare(credentials.password, user.password);
           if (isValid) {
-            return { id: user.id, email: user.email, name: user.name };
+            return { id: user.id};
           }
         }
         else
@@ -59,37 +59,46 @@ const authOption : NextAuthOptions = ({
               password: hashedPassword,
             },
           });
-          return { id: newUser.id, email: newUser.email, name: newUser.name };
+          return { id: newUser.id};
         }
 
         return null; 
       },
     }),
   ],
-
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
+      try {
+        if (user) {
+          token.id = user.id;
+          token.email = user.email;
+          token.name = user.name;
+        }
+        return token;
+      } catch (error) {
+        console.error('Error in JWT callback:', error);
+        return token;
       }
-      return token;
     },
     async session({ session, token }) {
-      if (token) {
-        session.user = {
-          email: token.email as string,
-          name: token.name as string,
-        };
+      try {
+        if (token) {
+          session.user = {
+            email: token.email as string,
+            name: token.name as string,
+          };
+        }
+        return session;
+      } catch (error) {
+        console.error('Error in Session callback:', error);
+        return session;
       }
-      return session;
     },
   },
 
   session: {
     strategy: "jwt",
-  },
+  }
 });
 
 const handler = NextAuth(authOption)
